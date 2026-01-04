@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixelated Flip Clock</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        :root {
+            --pastel-pink: #f7dbe7;
+            --off-white: #fffafc;
+            --shadow-pink: #e8c7d6;
+            --dark-pink: #d4a8bc;
+            --pixel-size: 0.5px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--pastel-pink) 0%, #fce8f0 50%, var(--pastel-pink) 100%);
+            font-family: 'Press Start 2P', cursive;
+            image-rendering: pixelated;
+            -ms-interpolation-mode: nearest-neighbor;
+        }
+
+        .clock-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 20px;
+            background: transparent;
+            image-rendering: pixelated;
+        }
+
+        .flip-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        .flip-card {
+            position: relative;
+            width: 100px;
+            height: 140px;
+            perspective: 400px;
+            image-rendering: pixelated;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            overflow: hidden;
+            backface-visibility: hidden;
+            background: var(--pastel-pink);
+            display: flex;
+            justify-content: center;
+            border: 4px solid var(--shadow-pink);
+            image-rendering: pixelated;
+        }
+
+        .card-top {
+            top: 0;
+            align-items: flex-end;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 2px solid var(--dark-pink);
+        }
+
+        .card-top span {
+            transform: translateY(50%);
+        }
+
+        .card-bottom {
+            bottom: 0;
+            align-items: flex-start;
+            border-radius: 0 0 8px 8px;
+            border-top: 2px solid var(--shadow-pink);
+        }
+
+        .card-bottom span {
+            transform: translateY(-50%);
+        }
+
+        .card span {
+            font-size: 72px;
+            font-weight: bold;
+            color: var(--off-white);
+            text-shadow: 
+                4px 4px 0 var(--dark-pink),
+                -2px -2px 0 var(--shadow-pink);
+            image-rendering: pixelated;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        /* Flip animation cards */
+        .flip-card .flip-top,
+        .flip-card .flip-bottom {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            overflow: hidden;
+            backface-visibility: hidden;
+            background: var(--pastel-pink);
+            display: flex;
+            justify-content: center;
+            border: 4px solid var(--shadow-pink);
+            z-index: 10;
+        }
+
+        .flip-card .flip-top {
+            top: 0;
+            align-items: flex-end;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 2px solid var(--dark-pink);
+            transform-origin: bottom center;
+            transform: rotateX(0deg);
+        }
+
+        .flip-card .flip-top span {
+            transform: translateY(50%);
+        }
+
+        .flip-card .flip-bottom {
+            bottom: 0;
+            align-items: flex-start;
+            border-radius: 0 0 8px 8px;
+            border-top: 2px solid var(--shadow-pink);
+            transform-origin: top center;
+            transform: rotateX(90deg);
+        }
+
+        .flip-card .flip-bottom span {
+            transform: translateY(-50%);
+        }
+
+        .flip-card .flip-top span,
+        .flip-card .flip-bottom span {
+            font-size: 72px;
+            font-weight: bold;
+            color: var(--off-white);
+            text-shadow: 
+                4px 4px 0 var(--dark-pink),
+                -2px -2px 0 var(--shadow-pink);
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .flip-card.flipping .flip-top {
+            animation: flipTop 0.3s ease-in forwards;
+        }
+
+        .flip-card.flipping .flip-bottom {
+            animation: flipBottom 0.3s ease-out 0.3s forwards;
+        }
+
+        @keyframes flipTop {
+            0% {
+                transform: rotateX(0deg);
+            }
+            100% {
+                transform: rotateX(-90deg);
+            }
+        }
+
+        @keyframes flipBottom {
+            0% {
+                transform: rotateX(90deg);
+            }
+            100% {
+                transform: rotateX(0deg);
+            }
+        }
+
+        .separator {
+            display: none;
+        }
+
+        .separator-dot {
+            width: 16px;
+            height: 16px;
+            background: var(--pastel-pink);
+            border: 3px solid var(--shadow-pink);
+            border-radius: 4px;
+            animation: pulse 1s infinite;
+            image-rendering: pixelated;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.9);
+            }
+        }
+
+        /* Pixelated decorations */
+        .pixel-decoration {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--shadow-pink);
+            image-rendering: pixelated;
+        }
+
+        /* Removed decorative pseudo-element to keep layout clean */
+
+        /* Label styling */
+        .time-label {
+            display: none;
+        }
+
+        .flip-group-container {
+            position: relative;
+            display: flex;
+            gap: 4px;
+        }
+
+        /* Add pixelated texture overlay */
+        .flip-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(0deg, transparent 50%, rgba(255,255,255,0.05) 50%),
+                linear-gradient(90deg, transparent 50%, rgba(255,255,255,0.05) 50%);
+            background-size: var(--pixel-size) var(--pixel-size);
+            pointer-events: none;
+            z-index: 20;
+            image-rendering: pixelated;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .clock-container {
+                flex-direction: column;
+                gap: 4px;
+                padding: 20px;
+            }
+
+            .flip-card {
+                width: 70px;
+                height: 100px;
+            }
+
+            .card span,
+            .flip-card .flip-top span,
+            .flip-card .flip-bottom span {
+                font-size: 48px;
+            }
+
+            .separator {
+                flex-direction: row;
+                padding: 0 20px;
+            }
+
+            .time-label {
+                font-size: 8px;
+            }
+        }
+
+        /* Additional pixelated aesthetic */
+        .card, .flip-top, .flip-bottom {
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <!-- Hours -->
+        <div class="flip-group-container">
+            <div class="flip-group">
+                <div class="flip-card" id="hours-tens">
+                    <div class="flip-card-inner">
+                        <div class="card card-top"><span>0</span></div>
+                        <div class="card card-bottom"><span>0</span></div>
+                        <div class="flip-top"><span>0</span></div>
+                        <div class="flip-bottom"><span>0</span></div>
+                    </div>
+                </div>
+                <div class="flip-card" id="hours-ones">
+                    <div class="flip-card-inner">
+                        <div class="card card-top"><span>0</span></div>
+                        <div class="card card-bottom"><span>0</span></div>
+                        <div class="flip-top"><span>0</span></div>
+                        <div class="flip-bottom"><span>0</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="time-label">Hours</div>
+        </div>
+
+        <div class="separator">
+            <div class="separator-dot"></div>
+            <div class="separator-dot"></div>
+        </div>
+
+        <!-- Minutes -->
+        <div class="flip-group-container">
+            <div class="flip-group">
+                <div class="flip-card" id="minutes-tens">
+                    <div class="flip-card-inner">
+                        <div class="card card-top"><span>0</span></div>
+                        <div class="card card-bottom"><span>0</span></div>
+                        <div class="flip-top"><span>0</span></div>
+                        <div class="flip-bottom"><span>0</span></div>
+                    </div>
+                </div>
+                <div class="flip-card" id="minutes-ones">
+                    <div class="flip-card-inner">
+                        <div class="card card-top"><span>0</span></div>
+                        <div class="card card-bottom"><span>0</span></div>
+                        <div class="flip-top"><span>0</span></div>
+                        <div class="flip-bottom"><span>0</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="time-label">Minutes</div>
+        </div>
+
+        <div class="separator">
+            <div class="separator-dot"></div>
+            <div class="separator-dot"></div>
+        </div>
+
+
+    <script>
+        class FlipClock {
+            constructor() {
+                this.cards = {
+                    hoursTens: document.getElementById('hours-tens'),
+                    hoursOnes: document.getElementById('hours-ones'),
+                    minutesTens: document.getElementById('minutes-tens'),
+                    minutesOnes: document.getElementById('minutes-ones'),
+                    secondsTens: document.getElementById('seconds-tens'),
+                    secondsOnes: document.getElementById('seconds-ones')
+                };
+                
+                this.previousTime = {
+                    hoursTens: -1,
+                    hoursOnes: -1,
+                    minutesTens: -1,
+                    minutesOnes: -1,
+                    secondsTens: -1,
+                    secondsOnes: -1
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.updateClock();
+                setInterval(() => this.updateClock(), 1000);
+            }
+
+            updateClock() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+
+                const timeDigits = {
+                    hoursTens: parseInt(hours[0]),
+                    hoursOnes: parseInt(hours[1]),
+                    minutesTens: parseInt(minutes[0]),
+                    minutesOnes: parseInt(minutes[1]),
+                    secondsTens: parseInt(seconds[0]),
+                    secondsOnes: parseInt(seconds[1])
+                };
+
+                Object.keys(timeDigits).forEach(key => {
+                    if (timeDigits[key] !== this.previousTime[key]) {
+                        this.flipCard(this.cards[key], this.previousTime[key], timeDigits[key]);
+                        this.previousTime[key] = timeDigits[key];
+                    }
+                });
+            }
+
+            flipCard(card, oldValue, newValue) {
+                if (oldValue === -1) {
+                    // Initial load - just set the value without animation
+                    this.setCardValue(card, newValue);
+                    return;
+                }
+
+                const cardTop = card.querySelector('.card-top span');
+                const cardBottom = card.querySelector('.card-bottom span');
+                const flipTop = card.querySelector('.flip-top span');
+                const flipBottom = card.querySelector('.flip-bottom span');
+
+                // Set up the flip animation
+                flipTop.textContent = oldValue;
+                flipBottom.textContent = newValue;
+                cardTop.textContent = oldValue;
+                cardBottom.textContent = newValue;
+
+                // Reset animation
+                card.classList.remove('flipping');
+                void card.offsetWidth; // Force reflow
+
+                // Start flip animation
+                card.classList.add('flipping');
+
+                // After animation completes, update the static cards
+                setTimeout(() => {
+                    cardTop.textContent = newValue;
+                    card.classList.remove('flipping');
+                    
+                    // Reset flip cards for next animation
+                    const flipTopEl = card.querySelector('.flip-top');
+                    const flipBottomEl = card.querySelector('.flip-bottom');
+                    flipTopEl.style.transform = 'rotateX(0deg)';
+                    flipBottomEl.style.transform = 'rotateX(90deg)';
+                }, 600);
+            }
+
+            setCardValue(card, value) {
+                const spans = card.querySelectorAll('span');
+                spans.forEach(span => {
+                    span.textContent = value;
+                });
+            }
+        }
+
+        // Initialize the flip clock when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new FlipClock();
+        });
+    </script>
+</body>
+</html>
