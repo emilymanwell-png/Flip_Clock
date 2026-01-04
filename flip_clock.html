@@ -453,16 +453,21 @@
 
                 // Set up the flip animation:
                 // - flipTop shows OLD value and will rotate down (disappear)
-                // - cardTop shows NEW value (revealed after flipTop rotates away)
-                // - cardBottom shows NEW value (static, always visible)
+                // - cardTop stays showing OLD value until flipTop finishes
+                // - cardBottom updates to NEW value immediately
                 // - flipBottom shows NEW value and will rotate up into view
                 flipTopSpan.textContent = oldValue;
                 flipBottomSpan.textContent = newValue;
-                cardTop.textContent = newValue;  // This is what's revealed when flipTop rotates away
+                cardTop.textContent = oldValue;  // Keep showing old value while flipTop animates
                 cardBottom.textContent = newValue;
 
                 // Start flip animation
                 card.classList.add('flipping');
+
+                // After first half of animation (flipTop completes), update cardTop
+                setTimeout(() => {
+                    cardTop.textContent = newValue;  // Now reveal new value on top
+                }, 300);
 
                 // After animation completes, clean up
                 setTimeout(() => {
