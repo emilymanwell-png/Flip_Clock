@@ -36,8 +36,12 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 20px;
-            background: transparent;
+            padding: 12px;
+            background: rgba(255,250,252,0.92); /* white-ish off-white, slightly translucent for Notion */
+            border-radius: 8px;
+            overflow-x: auto; /* keep horizontal layout and allow scrolling when narrow */
+            -webkit-overflow-scrolling: touch;
+            flex-wrap: nowrap; /* prevent stacking into column */
             image-rendering: pixelated;
         }
 
@@ -251,9 +255,10 @@
         /* Responsive design */
         @media (max-width: 768px) {
             .clock-container {
-                flex-direction: column;
+                /* Keep horizontal orientation on small screens; allow horizontal scroll instead */
+                flex-direction: row;
                 gap: 4px;
-                padding: 20px;
+                padding: 12px;
             }
 
             .flip-card {
