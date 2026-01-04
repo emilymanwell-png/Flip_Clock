@@ -428,6 +428,8 @@
             }
 
             flipCard(card, oldValue, newValue) {
+                if (!card) return; // Guard against missing elements
+                
                 if (oldValue === -1) {
                     // Initial load - just set the value without animation
                     this.setCardValue(card, newValue);
@@ -436,32 +438,43 @@
 
                 const cardTop = card.querySelector('.card-top span');
                 const cardBottom = card.querySelector('.card-bottom span');
-                const flipTop = card.querySelector('.flip-top span');
-                const flipBottom = card.querySelector('.flip-bottom span');
+                const flipTop = card.querySelector('.flip-top');
+                const flipBottom = card.querySelector('.flip-bottom');
+                const flipTopSpan = flipTop.querySelector('span');
+                const flipBottomSpan = flipBottom.querySelector('span');
 
-                // Set up the flip animation
-                flipTop.textContent = oldValue;
-                flipBottom.textContent = newValue;
-                cardTop.textContent = oldValue;
-                cardBottom.textContent = newValue;
-
-                // Reset animation
+                // Reset any ongoing animation first
                 card.classList.remove('flipping');
-                void card.offsetWidth; // Force reflow
+                flipTop.style.transform = 'rotateX(0deg)';
+                flipBottom.style.transform = 'rotateX(90deg)';
+                
+                // Force reflow to ensure reset takes effect
+                void card.offsetWidth;
+
+                // Set up the flip animation:
+                // - flipTop shows OLD value and will rotate down (disappear)
+                // - cardTop shows NEW value (revealed after flipTop rotates away)
+                // - cardBottom shows NEW value (static, always visible)
+                // - flipBottom shows NEW value and will rotate up into view
+                flipTopSpan.textContent = oldValue;
+                flipBottomSpan.textContent = newValue;
+                cardTop.textContent = newValue;  // This is what's revealed when flipTop rotates away
+                cardBottom.textContent = newValue;
 
                 // Start flip animation
                 card.classList.add('flipping');
 
-                // After animation completes, update the static cards
+                // After animation completes, clean up
                 setTimeout(() => {
-                    cardTop.textContent = newValue;
                     card.classList.remove('flipping');
                     
-                    // Reset flip cards for next animation
-                    const flipTopEl = card.querySelector('.flip-top');
-                    const flipBottomEl = card.querySelector('.flip-bottom');
-                    flipTopEl.style.transform = 'rotateX(0deg)';
-                    flipBottomEl.style.transform = 'rotateX(90deg)';
+                    // Reset flip elements for next animation
+                    flipTop.style.transform = 'rotateX(0deg)';
+                    flipBottom.style.transform = 'rotateX(90deg)';
+                    
+                    // Sync flip spans to current value for next flip
+                    flipTopSpan.textContent = newValue;
+                    flipBottomSpan.textContent = newValue;
                 }, 600);
             }
 
